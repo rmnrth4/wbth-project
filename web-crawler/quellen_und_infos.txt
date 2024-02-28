@@ -1,0 +1,5 @@
+
+Scrapy Kurs - https://youtu.be/mBoX_JCKZTE?t=5201 - An dieser stelle aufgehört
+oder in Text: - https://scrapeops.io/python-scrapy-playbook/scrapy-beginners-guide/
+Crawl Spider - https://www.youtube.com/watch?v=o1g8prnkuiQ
+
