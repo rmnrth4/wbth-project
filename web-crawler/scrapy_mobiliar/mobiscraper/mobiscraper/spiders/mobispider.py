@@ -1,33 +1,47 @@
-# import scrapy
-# from bs4 import BeautifulSoup
+import scrapy
+from bs4 import BeautifulSoup
 
 
-# class MobispiderSpider(scrapy.Spider):
-#     name = "mobispider"
-#     allowed_domains = ["mobiliar.ch"]
-#     start_urls = [
-#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/fahrzeuge-und-reisen/fuer-ihre-velos-die-fahrrad-kaskoversicherung"
-#     ]
+class MobispiderSpider(scrapy.Spider):
+    name = "mobispider"
+    allowed_domains = ["mobiliar.ch"]
+    start_urls = [
+        "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/so-finanzieren-sie-ihr-neues-zuhause"
+    ]
 
-#     def parse(self, response):
+    def parse(self, response):
 
-#         current_url = response.url
-#         if current_url.endswith("/"):
-#             page_name = current_url.split("/")[-2]
-#         else:
-#             page_name = current_url.split("/")[-1]
+        article = response.css("article.node")
+        entire_text = article.css("div")
+        paragraphs = entire_text.css(
+            "div.node-field.node-field--name-field-pgp-paragraphs.node-field--type-entity-reference-revisions.node-field--label-hidden.node-field__items"
+        )
+        paragraph_sections = paragraphs.css("div.node-field__item *::text")
 
-#         html_content = response.css("div#block-mainpagecontent").extract_first()
-#         soup = BeautifulSoup(html_content, "html.parser")
+        texts = ""
+        for item in paragraph_sections.extract():
+            text = item.strip()
+            if text:
+                texts += text
 
-#         yield {
-#             f"{page_name}": soup.get_text().strip(),
-#         }
+        # print(texts)
+
+        # html_content = response.css("div#block-mainpagecontent").extract_first()
+        # soup = BeautifulSoup(html_content)
+
+        yield {
+            "page_title": article.css("h1#page-title span::text").get(),
+            "sub_title": entire_text.css("h2 div::text").get(),
+            "intro_text": entire_text.css(
+                "div.node-field.node-field--name-field-shared-lead-text.node-field--type-text-long.node-field--label-hidden.node-field__item p::text"
+            ).get(),
+            "content": texts,
+        }
 
 
-# article = response.css("article.node")
+#   fetch("https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/so-finanzieren-sie-ihr-neues-zuhause")
 
-# page_title = article.css('h1#page-title span::text').get()
+
 # sub_article_div = article.css("div")
 
 # untertitel = h2_element = response.css('h2')
@@ -54,34 +68,36 @@
 #     }
 
 
-import scrapy
+# import scrapy
 
-from bs4 import BeautifulSoup
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
+# from bs4 import BeautifulSoup
+# from scrapy.spiders import CrawlSpider, Rule
+# from scrapy.linkextractors import LinkExtractor
 
 
-# https://www.youtube.com/watch?v=o1g8prnkuiQ
-class MobispiderSpider(CrawlSpider):
-    name = "mobispider"
-    allowed_domains = ["mobiliar.ch"]
-    start_urls = ["https://www.mobiliar.ch"]
+# # https://www.youtube.com/watch?v=o1g8prnkuiQ
+# class MobispiderSpider(CrawlSpider):
+#     name = "mobispider"
+#     allowed_domains = ["mobiliar.ch"]
+#     start_urls = ["https://www.mobiliar.ch"]
 
-    rules = (
-        # Rule(LinkExtractor(allow="fahrzeuge-und-reisen")),
-        Rule(LinkExtractor(allow="versicherungen-und-vorsorge"), callback="parse_item"),
-    )
+#     rules = (
+#         # Rule(LinkExtractor(allow="fahrzeuge-und-reisen")),
+#         Rule(LinkExtractor(allow="versicherungen-und-vorsorge"), callback="parse_item"),
+#     )
 
-    def parse_item(self, response):
-        current_url = response.url
-        if current_url.endswith("/"):
-            page_name = current_url.split("/")[-2]
-        else:
-            page_name = current_url.split("/")[-1]
+#     def parse_item(self, response):
 
-        html_content = response.css("div#block-mainpagecontent").extract_first()
-        soup = BeautifulSoup(html_content)  # , "html.parser"
+#         # This code extracted the whole html inside the block-mainpagecontent
+#         current_url = response.url
+#         if current_url.endswith("/"):
+#             page_name = current_url.split("/")[-2]
+#         else:
+#             page_name = current_url.split("/")[-1]
 
-        yield {
-            f"{page_name}": soup.get_text().strip(),
-        }
+#         html_content = response.css("div#block-mainpagecontent").extract_first()
+#         soup = BeautifulSoup(html_content)  # , "html.parser"
+
+#         yield {
+#             f"{page_name}": soup.get_text().strip(),
+#         }
