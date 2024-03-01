@@ -16,23 +16,18 @@ class MobispiderSpider(scrapy.Spider):
         paragraphs = entire_text.css(
             "div.node-field.node-field--name-field-pgp-paragraphs.node-field--type-entity-reference-revisions.node-field--label-hidden.node-field__items"
         )
-        paragraph_sections = paragraphs.css("div.node-field__item *::text")
+        paragraph_sections = paragraphs.css(
+            "div.node-field--name-field-cbpb-txt *::text"
+        )
 
         texts = ""
         for item in paragraph_sections.extract():
-            text = item.strip()
-            if text:
-                texts += text
-
-        # print(texts)
-
-        # html_content = response.css("div#block-mainpagecontent").extract_first()
-        # soup = BeautifulSoup(html_content)
+            texts += item.strip() + " "
 
         yield {
             "page_title": article.css("h1#page-title span::text").get(),
             "sub_title": entire_text.css("h2 div::text").get(),
-            "intro_text": entire_text.css(
+            "introduction": entire_text.css(
                 "div.node-field.node-field--name-field-shared-lead-text.node-field--type-text-long.node-field--label-hidden.node-field__item p::text"
             ).get(),
             "content": texts,
