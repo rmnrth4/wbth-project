@@ -1,5 +1,6 @@
 import scrapy
 from bs4 import BeautifulSoup
+from mobiscraper.items import MobiItem
 
 
 def get_joined_text(list_of_text_elements):
@@ -26,7 +27,6 @@ class MobispiderSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
-        current_url = response.url
         article = response.css("article.node")
         entire_text = article.css("div")
         summary_box = article.css("div.paragraphs-items--pg-advanced-textbox *::text")
@@ -53,17 +53,19 @@ class MobispiderSpider(scrapy.Spider):
         else:
             texts = ""
 
-        yield {
-            "url": current_url,
-            "page_title": article.css("h1#page-title span::text").get(),
-            "sub_title": entire_text.css("h2 div::text").get(),
-            "introduction": entire_text.css(
-                "div.node-field--name-field-shared-lead-text p::text"
-            ).get(),
-            "summary_box": summary_box_txt,
-            "content": texts,
-            "accordion": accordion_txt,
-        }
+        mobi_item = MobiItem()
+
+        mobi_item["url"] = response.url
+        mobi_item["page_title"] = article.css("h1#page-title span::text").get()
+        mobi_item["sub_title"] = entire_text.css("h2 div::text").get()
+        mobi_item["introduction"] = entire_text.css(
+            "div.node-field--name-field-shared-lead-text p::text"
+        ).get()
+        mobi_item["summary_box"] = summary_box_txt
+        mobi_item["content"] = texts
+        mobi_item["accordion"] = accordion_txt
+
+        yield mobi_item
 
 
 # def parse(self, response):
@@ -192,14 +194,17 @@ class MobispiderSpider(scrapy.Spider):
 #         else:
 #             texts = ""
 
-#         yield {
-#             "url": current_url,
-#             "page_title": article.css("h1#page-title span::text").get(),
-#             "sub_title": entire_text.css("h2 div::text").get(),
-#             "introduction": entire_text.css(
-#                 "div.node-field--name-field-shared-lead-text p::text"
-#             ).get(),
-#             "summary_box": summary_box_txt,
-#             "content": texts,
-#             "accordion": accordion_txt,
-#         }
+
+# mobi_item = MobiItem()
+
+# mobi_item["url"] = response.url
+# mobi_item["page_title"] = article.css("h1#page-title span::text").get()
+# mobi_item["sub_title"] = entire_text.css("h2 div::text").get()
+# mobi_item["introduction"] = entire_text.css(
+#     "div.node-field--name-field-shared-lead-text p::text"
+# ).get()
+# mobi_item["summary_box"] = summary_box_txt
+# mobi_item["content"] = texts
+# mobi_item["accordion"] = accordion_txt
+
+# yield mobi_item

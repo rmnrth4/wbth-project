@@ -13,5 +13,10 @@ class MobiscraperItem(scrapy.Item):
 
 
 class MobiItem(scrapy.Item):
-    pass
-    # macht keinen Sinn aktuell
+    url = scrapy.Field()
+    page_title = scrapy.Field()
+    sub_title = scrapy.Field()
+    introduction = scrapy.Field()
+    summary_box = scrapy.Field()
+    content = scrapy.Field()
+    accordion = scrapy.Field()
