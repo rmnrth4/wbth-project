@@ -3,54 +3,65 @@ from bs4 import BeautifulSoup
 
 
 def get_joined_text(list_of_text_elements):
-    return "".join([item.strip() + " " for item in list_of_text_elements.extract()])
+    import re
+
+    pattern = re.compile(r"^\s*$")
+    return "".join(
+        [
+            item.strip() + " "
+            for item in list_of_text_elements.extract()
+            if not pattern.match(item)
+        ]
+    )
 
 
-# class MobispiderSpider(scrapy.Spider):
-#     name = "mobispider"
-#     allowed_domains = ["mobiliar.ch"]
-#     start_urls = [
-#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
-#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/schaeden-an-ihrer-mietwohnung"
-#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/wertsachenversicherung"
-#     ]
+class MobispiderSpider(scrapy.Spider):
+    name = "mobispider"
+    allowed_domains = ["mobiliar.ch"]
+    start_urls = [
+        # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
+        # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/schaeden-an-ihrer-mietwohnung"
+        # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/wertsachenversicherung"
+        "https://www.mobiliar.ch/versicherungen-und-vorsorge/datenschutz-und-sicherheit"
+    ]
 
-#     def parse(self, response):
-#         current_url = response.url
-#         article = response.css("article.node")
-#         entire_text = article.css("div")
-#         summary_box = article.css("div.box--secondary *::text")
-#         summary_box_txt = get_joined_text(summary_box)
-#         accordion = article.css(
-#             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
-#         )
-#         accordion_txt = get_joined_text(accordion)
-#         txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
-#         txt_b = article.css("div.node-field--name-field-gb-body *::text")
-#         txt_c = article.css("div.node-field--type-text-with-summary *::text")
-#         txt_d = article.css("div.node-field--name-field-page-body *::text")
-#         if len(txt_a) > 0:
-#             texts = get_joined_text(txt_a)
-#         elif len(txt_b) > 0:
-#             texts = get_joined_text(txt_b)
-#         elif len(txt_c) > 0:
-#             texts = get_joined_text(txt_c)
-#         elif len(txt_d) > 0:
-#             texts = get_joined_text(txt_d)
-#         else:
-#             texts = ""
+    def parse(self, response):
+        current_url = response.url
+        article = response.css("article.node")
+        entire_text = article.css("div")
+        summary_box = article.css("div.box--secondary *::text")
+        summary_box_txt = get_joined_text(summary_box)
+        accordion = article.css(
+            "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
+        )
+        accordion_txt = get_joined_text(accordion)
+        txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
+        txt_b = article.css("div.node-field--name-field-gb-body *::text")
+        txt_c = article.css("div.node-field--type-text-with-summary *::text")
+        txt_d = article.css("div.node-field--name-field-page-body *::text")
+        if len(txt_a) > 0:
+            texts = get_joined_text(txt_a)
+        elif len(txt_b) > 0:
+            texts = get_joined_text(txt_b)
+        elif len(txt_c) > 0:
+            texts = get_joined_text(txt_c)
+        elif len(txt_d) > 0:
+            texts = get_joined_text(txt_d)
+        else:
+            texts = ""
 
-#         yield {
-#             "url": current_url,
-#             "page_title": article.css("h1#page-title span::text").get(),
-#             "sub_title": entire_text.css("h2 div::text").get(),
-#             "introduction": entire_text.css(
-#                 "div.node-field--name-field-shared-lead-text p::text"
-#             ).get(),
-#             "summary_box": summary_box_txt,
-#             "content": texts,
-#             "accordion": accordion_txt,
-#         }
+        yield {
+            "url": current_url,
+            "page_title": article.css("h1#page-title span::text").get(),
+            "sub_title": entire_text.css("h2 div::text").get(),
+            "introduction": entire_text.css(
+                "div.node-field--name-field-shared-lead-text p::text"
+            ).get(),
+            "summary_box": summary_box_txt,
+            "content": texts,
+            "accordion": accordion_txt,
+        }
+
 
 # def parse(self, response):
 #     links = response.css("a::attr(href)").extract()
@@ -125,67 +136,67 @@ def get_joined_text(list_of_text_elements):
 # }
 
 
-""" This follwing parser is perfect to parse all ratgeber pages """
+# """ This follwing parser is perfect to parse all ratgeber pages """
 
-import scrapy
-from bs4 import BeautifulSoup
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
+# import scrapy
+# from bs4 import BeautifulSoup
+# from scrapy.spiders import CrawlSpider, Rule
+# from scrapy.linkextractors import LinkExtractor
 
 
-class MobispiderSpider(CrawlSpider):
-    name = "mobispider"
-    allowed_domains = ["mobiliar.ch"]
-    start_urls = [
-        # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
-        "https://www.mobiliar.ch"
-    ]
+# class MobispiderSpider(CrawlSpider):
+#     name = "mobispider"
+#     allowed_domains = ["mobiliar.ch"]
+#     start_urls = [
+#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
+#         "https://www.mobiliar.ch"
+#     ]
 
-    rules = (
-        Rule(
-            LinkExtractor(
-                # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
-                # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/fahrzeuge-und-reisen/ratgeber/"
-                allow="ratgeber"  # to scrape all ratgeber pages
-            ),
-            callback="parse_item",
-            follow=True,
-        ),
-    )
+#     rules = (
+#         Rule(
+#             LinkExtractor(
+#                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
+#                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/fahrzeuge-und-reisen/ratgeber/"
+#                 allow="ratgeber"  # to scrape all ratgeber pages
+#             ),
+#             callback="parse_item",
+#             follow=True,
+#         ),
+#     )
 
-    def parse_item(self, response):
-        current_url = response.url
-        article = response.css("article.node")
-        entire_text = article.css("div")
-        summary_box = article.css("div.box--secondary *::text")
-        summary_box_txt = get_joined_text(summary_box)
-        accordion = article.css(
-            "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
-        )
-        accordion_txt = get_joined_text(accordion)
-        txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
-        txt_b = article.css("div.node-field--name-field-gb-body *::text")
-        txt_c = article.css("div.node-field--type-text-with-summary *::text")
-        txt_d = article.css("div.node-field--name-field-page-body *::text")
-        if len(txt_a) > 0:
-            texts = get_joined_text(txt_a)
-        elif len(txt_b) > 0:
-            texts = get_joined_text(txt_b)
-        elif len(txt_c) > 0:
-            texts = get_joined_text(txt_c)
-        elif len(txt_d) > 0:
-            texts = get_joined_text(txt_d)
-        else:
-            texts = ""
+#     def parse_item(self, response):
+#         current_url = response.url
+#         article = response.css("article.node")
+#         entire_text = article.css("div")
+#         summary_box = article.css("div.box--secondary *::text")
+#         summary_box_txt = get_joined_text(summary_box)
+#         accordion = article.css(
+#             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
+#         )
+#         accordion_txt = get_joined_text(accordion)
+#         txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
+#         txt_b = article.css("div.node-field--name-field-gb-body *::text")
+#         txt_c = article.css("div.node-field--type-text-with-summary *::text")
+#         txt_d = article.css("div.node-field--name-field-page-body *::text")
+#         if len(txt_a) > 0:
+#             texts = get_joined_text(txt_a)
+#         elif len(txt_b) > 0:
+#             texts = get_joined_text(txt_b)
+#         elif len(txt_c) > 0:
+#             texts = get_joined_text(txt_c)
+#         elif len(txt_d) > 0:
+#             texts = get_joined_text(txt_d)
+#         else:
+#             texts = ""
 
-        yield {
-            "url": current_url,
-            "page_title": article.css("h1#page-title span::text").get(),
-            "sub_title": entire_text.css("h2 div::text").get(),
-            "introduction": entire_text.css(
-                "div.node-field--name-field-shared-lead-text p::text"
-            ).get(),
-            "summary_box": summary_box_txt,
-            "content": texts,
-            "accordion": accordion_txt,
-        }
+#         yield {
+#             "url": current_url,
+#             "page_title": article.css("h1#page-title span::text").get(),
+#             "sub_title": entire_text.css("h2 div::text").get(),
+#             "introduction": entire_text.css(
+#                 "div.node-field--name-field-shared-lead-text p::text"
+#             ).get(),
+#             "summary_box": summary_box_txt,
+#             "content": texts,
+#             "accordion": accordion_txt,
+#         }
