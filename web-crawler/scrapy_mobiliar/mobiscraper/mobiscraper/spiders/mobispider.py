@@ -19,17 +19,20 @@ class MobispiderSpider(scrapy.Spider):
     name = "mobispider"
     allowed_domains = ["mobiliar.ch"]
     start_urls = [
-        # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
+        "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/schaeden-an-ihrer-mietwohnung"
         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/wertsachenversicherung"
-        "https://www.mobiliar.ch/versicherungen-und-vorsorge/datenschutz-und-sicherheit"
+        # "https://www.mobiliar.ch/hub/wohnen/umbau"
     ]
 
     def parse(self, response):
         current_url = response.url
         article = response.css("article.node")
         entire_text = article.css("div")
-        summary_box = article.css("div.box--secondary *::text")
+        summary_box = article.css("div.paragraphs-items--pg-advanced-textbox *::text")
+        if len(summary_box) == 0:
+            summary_box = article.css("div.node-field--name-field-pp-summary *::text")
+
         summary_box_txt = get_joined_text(summary_box)
         accordion = article.css(
             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
