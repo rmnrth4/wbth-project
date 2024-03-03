@@ -1,41 +1,42 @@
-# import scrapy
-# from bs4 import BeautifulSoup
+import scrapy
+from bs4 import BeautifulSoup
+
+
+def get_joined_text(list_of_text_elements):
+    return "".join([item.strip() + " " for item in list_of_text_elements.extract()])
 
 
 # class MobispiderSpider(scrapy.Spider):
 #     name = "mobispider"
 #     allowed_domains = ["mobiliar.ch"]
 #     start_urls = [
-#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
-#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/services/praemienrechner"
+#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
+#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/schaeden-an-ihrer-mietwohnung"
 #         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/wertsachenversicherung"
 #     ]
 
 #     def parse(self, response):
-
 #         current_url = response.url
 #         article = response.css("article.node")
 #         entire_text = article.css("div")
 #         summary_box = article.css("div.box--secondary *::text")
-#         summary_box_txt = "".join(
-#             [item.strip() + " " for item in summary_box.extract()]
-#         )
+#         summary_box_txt = get_joined_text(summary_box)
 #         accordion = article.css(
 #             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
 #         )
-#         accordion_txt = "".join([item.strip() + " " for item in accordion.extract()])
+#         accordion_txt = get_joined_text(accordion)
 #         txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
 #         txt_b = article.css("div.node-field--name-field-gb-body *::text")
 #         txt_c = article.css("div.node-field--type-text-with-summary *::text")
 #         txt_d = article.css("div.node-field--name-field-page-body *::text")
 #         if len(txt_a) > 0:
-#             texts = "".join([item.strip() + " " for item in txt_a.extract()])
+#             texts = get_joined_text(txt_a)
 #         elif len(txt_b) > 0:
-#             texts = "".join([item.strip() + " " for item in txt_b.extract()])
+#             texts = get_joined_text(txt_b)
 #         elif len(txt_c) > 0:
-#             texts = "".join([item.strip() + " " for item in txt_c.extract()])
+#             texts = get_joined_text(txt_c)
 #         elif len(txt_d) > 0:
-#             texts = "".join([item.strip() + " " for item in txt_d.extract()])
+#             texts = get_joined_text(txt_d)
 #         else:
 #             texts = ""
 
@@ -51,17 +52,17 @@
 #             "accordion": accordion_txt,
 #         }
 
+# def parse(self, response):
+#     links = response.css("a::attr(href)").extract()
 
-#     def parse(self, response):
-#         links = response.css("a::attr(href)").extract()
+#     for link in links:
+#         if link.startswith(
+#             "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
+#         ):
+#             yield {"url": link}
+#         else:
+#             pass
 
-#         for link in links:
-#             if link.startswith(
-#                 "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
-#             ):
-#                 yield {"url": link}
-#             else:
-#                 pass
 
 #   fetch("https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/so-finanzieren-sie-ihr-neues-zuhause")
 
@@ -157,25 +158,23 @@ class MobispiderSpider(CrawlSpider):
         article = response.css("article.node")
         entire_text = article.css("div")
         summary_box = article.css("div.box--secondary *::text")
-        summary_box_txt = "".join(
-            [item.strip() + " " for item in summary_box.extract()]
-        )
+        summary_box_txt = get_joined_text(summary_box)
         accordion = article.css(
             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
         )
-        accordion_txt = "".join([item.strip() + " " for item in accordion.extract()])
+        accordion_txt = get_joined_text(accordion)
         txt_a = article.css("div.node-field--name-field-cbpb-txt *::text")
         txt_b = article.css("div.node-field--name-field-gb-body *::text")
         txt_c = article.css("div.node-field--type-text-with-summary *::text")
         txt_d = article.css("div.node-field--name-field-page-body *::text")
         if len(txt_a) > 0:
-            texts = "".join([item.strip() + " " for item in txt_a.extract()])
+            texts = get_joined_text(txt_a)
         elif len(txt_b) > 0:
-            texts = "".join([item.strip() + " " for item in txt_b.extract()])
+            texts = get_joined_text(txt_b)
         elif len(txt_c) > 0:
-            texts = "".join([item.strip() + " " for item in txt_c.extract()])
+            texts = get_joined_text(txt_c)
         elif len(txt_d) > 0:
-            texts = "".join([item.strip() + " " for item in txt_d.extract()])
+            texts = get_joined_text(txt_d)
         else:
             texts = ""
 
