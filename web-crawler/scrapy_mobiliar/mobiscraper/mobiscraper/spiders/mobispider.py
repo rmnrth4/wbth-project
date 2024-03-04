@@ -26,6 +26,8 @@ class MobispiderSpider(scrapy.Spider):
         # "https://www.mobiliar.ch/hub/wohnen/umbau"
     ]
 
+    custom_settings = {"FEEDS": {"test.json": {"format": "json", "overwrite": True}}}
+
     def parse(self, response):
         article = response.css("article.node")
         entire_text = article.css("div")

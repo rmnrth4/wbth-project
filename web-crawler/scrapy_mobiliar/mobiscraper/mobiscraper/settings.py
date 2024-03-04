@@ -12,6 +12,7 @@ BOT_NAME = "romans_mobiscraper"
 SPIDER_MODULES = ["mobiscraper.spiders"]
 NEWSPIDER_MODULE = "mobiscraper.spiders"
 
+FEEDS = {"file_name.json": {"format": "json", "overwrite": True}}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "mobiscraper (+http://www.yourdomain.com)"
@@ -62,9 +63,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "mobiscraper.pipelines.MobiscraperPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "mobiscraper.pipelines.MobiscraperPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
