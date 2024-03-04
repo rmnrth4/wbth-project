@@ -7,3 +7,5 @@ dependencies:
   - pip:
   - requests
   - lxml
+  - pymongo
+  - regex

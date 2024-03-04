@@ -3,3 +3,11 @@ Scrapy Kurs - https://youtu.be/mBoX_JCKZTE?t=5201 - An dieser stelle aufgehört
 oder in Text: - https://scrapeops.io/python-scrapy-playbook/scrapy-beginners-guide/
 Crawl Spider - https://www.youtube.com/watch?v=o1g8prnkuiQ
 
+Storing data in MongoDB: https://www.youtube.com/watch?v=djfnjtYB2co
+https://www.mongodb.com/basics/how-to-use-mongodb-to-store-scraped-data
+Run Mongo: 
+    brew services start mongodb-community@7.0
+Stop Mongo: 
+    brew services stop mongodb-community@7.0
+To verify that MongoDB is running, perform one of the following:
+    brew services list
