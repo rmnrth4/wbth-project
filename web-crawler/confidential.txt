@@ -1,1 +1,4 @@
-Hei Ho
+Database User Username: Cluster84441
+Database User Password: 6wrHmQsb1OevrDYB
+Your connection string: mongodb+srv://cluster84441.pfrzrmw.mongodb.net
+mongodb+srv://roman:6wrHmQsb1OevrDYB@cluster84441.pfrzrmw.mongodb.net/

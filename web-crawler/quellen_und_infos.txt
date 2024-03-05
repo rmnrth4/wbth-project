@@ -11,3 +11,6 @@ Stop Mongo:
     brew services stop mongodb-community@7.0
 To verify that MongoDB is running, perform one of the following:
     brew services list
+
+how-to-use-mongodb-to-store-scraped-data
+https://www.mongodb.com/basics/how-to-use-mongodb-to-store-scraped-data

@@ -12,7 +12,7 @@ BOT_NAME = "romans_mobiscraper"
 SPIDER_MODULES = ["mobiscraper.spiders"]
 NEWSPIDER_MODULE = "mobiscraper.spiders"
 
-FEEDS = {"file_name.json": {"format": "json", "overwrite": True}}
+FEEDS = {"full_scrape.json": {"format": "json", "overwrite": True}}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "mobiscraper (+http://www.yourdomain.com)"

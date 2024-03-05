@@ -9,13 +9,13 @@
 import pymongo
 import sys
 
-# from .items import MobiItem
+from .items import MobiItem
 from itemadapter import ItemAdapter
 
 
 class MobiscraperPipeline:
 
-    collection = "scrapy_items"
+    collection = "full_scrape"
 
     def __init__(self, mongodb_uri, mongodb_db):
         self.mongodb_uri = mongodb_uri
@@ -40,6 +40,6 @@ class MobiscraperPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        data = dict(QuoteItem(item))
+        data = dict(MobiItem(item))
         self.db[self.collection].insert_one(data)
         return item
