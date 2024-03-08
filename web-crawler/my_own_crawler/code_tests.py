@@ -1,17 +1,33 @@
-import re
+def get_joined_text(list_of_text_elements):
+    import re
 
-pattern = re.compile(r"^\s*$")
+    pattern = re.compile(r"^\s*$")
+    joined_text = ""
 
-# Beispiel Verwendung:
-strings = ["", "    ", "\t", "  abc ", "123", "\n", "\n\t  ", "\n\n\n\n\n"]
+    for item in list_of_text_elements.extract():
+        if not pattern.match(item):
+            joined_text += item.strip() + " "
 
-chained_text = ""
-for s in strings:
-    if not pattern.match(s):
-        chained_text += s
-print(chained_text)
+    # Entfernen Sie das letzte Leerzeichen vor der Rückgabe
+    return joined_text.rstrip()
 
-# for item in list_of_text_elements.extract():
-#     if not pattern.match(s):
 
-# return chained_text
+def get_joined_text(list_of_text_elements):
+    import re
+
+    pattern = re.compile(r"^\s*$")
+    joined_text = ""
+    joined_text.join(
+        [
+            item.strip() + " "
+            for item in list_of_text_elements
+            if not pattern.match(item)
+        ]
+    )
+    return joined_text.rstrip()
+
+
+# Beispielaufruf:
+text_elements = ["   Hello   ", "World", "   ", "   Python   "]
+result = get_joined_text(text_elements)
+print(result)

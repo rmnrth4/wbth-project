@@ -13,6 +13,7 @@ from .items import MobiItem
 from itemadapter import ItemAdapter
 
 
+# to use this: uncomment line 66 in settings.py - ITEM_PIPELINE
 class MobiscraperPipeline:
 
     collection = "scraping"

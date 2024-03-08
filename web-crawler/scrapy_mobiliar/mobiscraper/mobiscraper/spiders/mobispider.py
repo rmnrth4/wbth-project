@@ -6,23 +6,28 @@ def get_joined_text(list_of_text_elements):
     import re
 
     pattern = re.compile(r"^\s*$")
-    return "".join(
-        [
-            item.strip() + " "
-            for item in list_of_text_elements.extract()
-            if not pattern.match(item)
-        ]
-    )
+    joined_text = ""
+    for item in list_of_text_elements.extract():
+        if not pattern.match(item):
+            joined_text += item.strip() + " "
+    return joined_text.rstrip()
+
+
+def avoid_none_result(css_selector_statement):
+    if css_selector_statement is None:
+        return ""
+    else:
+        return css_selector_statement
 
 
 # class MobispiderSpider(scrapy.Spider):
 #     name = "mobispider"
 #     allowed_domains = ["mobiliar.ch"]
 #     start_urls = [
-#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
+#         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/privat-rechtsschutz"
 #         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/schaeden-an-ihrer-mietwohnung"
 #         # "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/wertsachenversicherung"
-#         # "https://www.mobiliar.ch/hub/wohnen/umbau"
+#         "https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/umziehen-leicht-gemacht"
 #     ]
 
 #     # custom_settings = {"FEEDS": {"test.json": {"format": "json", "overwrite": True}}}
@@ -30,11 +35,12 @@ def get_joined_text(list_of_text_elements):
 #     def parse(self, response):
 #         article = response.css("article.node")
 #         entire_text = article.css("div")
+
 #         summary_box = article.css("div.paragraphs-items--pg-advanced-textbox *::text")
 #         if len(summary_box) == 0:
 #             summary_box = article.css("div.node-field--name-field-pp-summary *::text")
-
 #         summary_box_txt = get_joined_text(summary_box)
+
 #         accordion = article.css(
 #             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
 #         )
@@ -57,16 +63,24 @@ def get_joined_text(list_of_text_elements):
 #         mobi_item = MobiItem()
 
 #         mobi_item["url"] = response.url
-#         mobi_item["page_title"] = article.css("h1#page-title span::text").get()
-#         mobi_item["sub_title"] = entire_text.css("h2 div::text").get()
-#         mobi_item["introduction"] = entire_text.css(
-#             "div.node-field--name-field-shared-lead-text p::text"
-#         ).get()
+#         mobi_item["page_title"] = avoid_none_result(
+#             article.css("h1#page-title span::text").get()
+#         ).rstrip()
+#         mobi_item["sub_title"] = avoid_none_result(
+#             entire_text.css("h2 div::text").get()
+#         ).rstrip()
+#         mobi_item["introduction"] = avoid_none_result(
+#             entire_text.css("div.node-field--name-field-shared-lead-text p::text").get()
+#         ).rstrip()
 #         mobi_item["summary_box"] = summary_box_txt
 #         mobi_item["content"] = texts
 #         mobi_item["accordion"] = accordion_txt
 
 #         yield mobi_item
+
+
+# scrapy crawl mobispider
+# -O test.json
 
 
 # def parse(self, response):
@@ -162,8 +176,8 @@ class MobispiderSpider(CrawlSpider):
             LinkExtractor(
                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/fahrzeuge-und-reisen/ratgeber/"
-                # allow="ratgeber"  # to scrape all ratgeber pages
-                allow=()  # to scrape all pages of Mobiliar
+                allow="ratgeber"  # to scrape all ratgeber pages
+                # allow=()  # to scrape all pages of Mobiliar
             ),
             callback="parse_item",
             follow=True,
@@ -173,11 +187,12 @@ class MobispiderSpider(CrawlSpider):
     def parse_item(self, response):
         article = response.css("article.node")
         entire_text = article.css("div")
+
         summary_box = article.css("div.paragraphs-items--pg-advanced-textbox *::text")
         if len(summary_box) == 0:
             summary_box = article.css("div.node-field--name-field-pp-summary *::text")
-
         summary_box_txt = get_joined_text(summary_box)
+
         accordion = article.css(
             "div.paragraphs-items--faq.paragraphs-items-full.paragraphs-paragraphs-items--faq-full *::text"
         )
@@ -200,11 +215,15 @@ class MobispiderSpider(CrawlSpider):
         mobi_item = MobiItem()
 
         mobi_item["url"] = response.url
-        mobi_item["page_title"] = article.css("h1#page-title span::text").get()
-        mobi_item["sub_title"] = entire_text.css("h2 div::text").get()
-        mobi_item["introduction"] = entire_text.css(
-            "div.node-field--name-field-shared-lead-text p::text"
-        ).get()
+        mobi_item["page_title"] = avoid_none_result(
+            article.css("h1#page-title span::text").get()
+        ).rstrip()
+        mobi_item["sub_title"] = avoid_none_result(
+            entire_text.css("h2 div::text").get()
+        ).rstrip()
+        mobi_item["introduction"] = avoid_none_result(
+            entire_text.css("div.node-field--name-field-shared-lead-text p::text").get()
+        ).rstrip()
         mobi_item["summary_box"] = summary_box_txt
         mobi_item["content"] = texts
         mobi_item["accordion"] = accordion_txt
