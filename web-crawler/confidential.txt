@@ -2,3 +2,7 @@ Database User Username: Cluster84441
 Database User Password: 6wrHmQsb1OevrDYB
 Your connection string: mongodb+srv://cluster84441.pfrzrmw.mongodb.net
 mongodb+srv://roman:6wrHmQsb1OevrDYB@cluster84441.pfrzrmw.mongodb.net/
+
+to run spider:
+rename pipelines.py - collection = "xxxx"
+scrapy crawl -s MONGODB_URI="mongodb+srv://roman:6wrHmQsb1OevrDYB@cluster84441.pfrzrmw.mongodb.net/" -s MONGODB_DATABASE="MobiliarData" mobispider

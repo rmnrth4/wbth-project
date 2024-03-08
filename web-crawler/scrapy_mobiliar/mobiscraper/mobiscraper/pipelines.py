@@ -15,7 +15,7 @@ from itemadapter import ItemAdapter
 
 class MobiscraperPipeline:
 
-    collection = "full_scrape"
+    collection = "scraping"
 
     def __init__(self, mongodb_uri, mongodb_db):
         self.mongodb_uri = mongodb_uri

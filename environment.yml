@@ -9,3 +9,5 @@ dependencies:
   - lxml
   - pymongo
   - regex
+  - nltk
+  - pandas
