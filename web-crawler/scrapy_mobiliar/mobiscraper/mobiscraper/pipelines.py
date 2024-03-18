@@ -16,7 +16,7 @@ from itemadapter import ItemAdapter
 # to use this: uncomment line 66 in settings.py - ITEM_PIPELINE
 class MobiscraperPipeline:
 
-    collection = "scraping"
+    collection = "full_scrape_2"
 
     def __init__(self, mongodb_uri, mongodb_db):
         self.mongodb_uri = mongodb_uri

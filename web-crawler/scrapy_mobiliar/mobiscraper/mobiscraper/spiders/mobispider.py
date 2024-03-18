@@ -176,8 +176,18 @@ class MobispiderSpider(CrawlSpider):
             LinkExtractor(
                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/wohnen-und-eigentum/ratgeber/"
                 # allow="https://www.mobiliar.ch/versicherungen-und-vorsorge/fahrzeuge-und-reisen/ratgeber/"
-                allow="ratgeber"  # to scrape all ratgeber pages
-                # allow=()  # to scrape all pages of Mobiliar
+                # allow="ratgeber"  # to scrape all ratgeber pages
+                allow=(),
+                deny=[
+                    "kunst.mobiliar.ch",
+                    "report.mobiliar.ch",
+                    "mobiliare.ch",
+                    "mobiliere.ch",
+                    "jobs",
+                    "generalagenturen",
+                    "gallerySlide",
+                    "vcard",
+                ],  # to scrape all pages of Mobiliar
             ),
             callback="parse_item",
             follow=True,
