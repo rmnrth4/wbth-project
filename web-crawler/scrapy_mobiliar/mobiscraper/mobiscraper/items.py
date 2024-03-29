@@ -14,9 +14,10 @@ class MobiscraperItem(scrapy.Item):
 
 class MobiItem(scrapy.Item):
     url = scrapy.Field()
-    page_title = scrapy.Field()
-    sub_title = scrapy.Field()
+    pagetitle = scrapy.Field()
+    subtitle = scrapy.Field()
     introduction = scrapy.Field()
-    summary_box = scrapy.Field()
+    summarybox = scrapy.Field()
     content = scrapy.Field()
     accordion = scrapy.Field()
+    linkedpages = scrapy.Field()
