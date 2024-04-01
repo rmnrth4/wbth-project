@@ -25,7 +25,7 @@ https://www.mongodb.com/basics/how-to-use-mongodb-to-store-scraped-data
 ###################################################################################################################
 Sentiment Analysis:
 https://www.datacamp.com/tutorial/text-analytics-beginners-nltk
-ander mögliche Quellen: https://huggingface.co/blog/sentiment-analysis-python
+https://huggingface.co/blog/sentiment-analysis-python --> https://huggingface.co/lxyuan/distilbert-base-multilingual-cased-sentiments-student
 
 
 Nächste Schritte:
@@ -33,8 +33,13 @@ Nächste Schritte:
 DB: JSON File
 Alle Webseiten werden durch eine Funktion geschickt (die wo nötig die Texte wieder zusammenführt) 
 die den Text mit einem Wert versieht und zurückgibt als neues Element in der DB.
- 
+
+
+###################################################################################################################
+############################################ Graph Visualisierung #################################################
+###################################################################################################################
 Erste Tabelle: Jede Webseite (auf der X-Achse) beinhaltet eine Liste mit allen links welche sie enthält.
 Matrix: Jede Webseite auf der X und auf der Y Achse. True Y auf der X-Webseite enthalten ist. Summe von True X-werten == Anzahl Elemente aus der Liste aus Tabelle Eins.
 Erwartetes Format vom Framework: Alle Verbindungen die True sind müssen aufgelistet werden in einer Liste. Beispiel: Node X – Node Y. Ausserdem muss Sentiment Wert mitgezogen werden.
 Network X Library Python – Dokumentation anschauen um Möglichkeiten zu evaluieren.
+
