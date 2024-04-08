@@ -28,13 +28,6 @@ https://www.datacamp.com/tutorial/text-analytics-beginners-nltk
 https://huggingface.co/blog/sentiment-analysis-python --> https://huggingface.co/lxyuan/distilbert-base-multilingual-cased-sentiments-student
 
 
-Nächste Schritte:
-
-DB: JSON File
-Alle Webseiten werden durch eine Funktion geschickt (die wo nötig die Texte wieder zusammenführt) 
-die den Text mit einem Wert versieht und zurückgibt als neues Element in der DB.
-
-
 ###################################################################################################################
 ############################################ Graph Visualisierung #################################################
 ###################################################################################################################
