@@ -3,3 +3,5 @@
 .web-crawler/scrapy_course
 .web-crawler/scrapy_mobiliar/mobiscraper/mobiscraper/spiders/scrape_archive
 .graph_network/plots
+.graph_network/plots_graphs_or_dfs_archive
+.sentiment-analyser/archiv
