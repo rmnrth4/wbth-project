@@ -144,7 +144,7 @@ def get_cluster_plot(pandas_df, cluster_col):
     from mpl_toolkits.mplot3d import Axes3D
 
     color_col = f"color_{cluster_col}"
-    fig = plt.figure()
+    fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection="3d")
     ax.scatter(
         pandas_df["negative"],
@@ -155,6 +155,7 @@ def get_cluster_plot(pandas_df, cluster_col):
     ax.set_xlabel("Negative")
     ax.set_ylabel("Neutral")
     ax.set_zlabel("Positive")
+    ax.set_box_aspect(aspect=None, zoom=0.95)
     plt.show()
 
 
@@ -198,18 +199,44 @@ def get_correlation_df_per_cluster(df, cluster_col):
     return correlation_of_mean_sentiment_per_cluster, correlation_matrix_per_cluster
 
 
+def get_usable_clusters(df, cluster_col, coefficient_names):
+    std_dev = df.groupby(cluster_col)[coefficient_names].std()
+    return std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
+
+
 def get_average_sentiment_and_size_per_cluster(df, cluster_col):
     coefficient_names = ["negative", "neutral", "positive"]
-    std_dev = df.groupby("group_id")[coefficient_names].std()
-    usable_values = std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
-    cluster_sizes = df.groupby("group_id").size()
+    usable_values = get_usable_clusters(df, cluster_col, coefficient_names)
+
+    cluster_sizes = df.groupby(cluster_col).size()
     mean_coeffs = (
-        df[df["group_id"].isin(usable_values.index)]
-        .groupby("group_id")[coefficient_names]
+        df[df[cluster_col].isin(usable_values.index)]
+        .groupby(cluster_col)[coefficient_names]
         .mean()
     )
     mean_coeffs[f"{cluster_col[:-3]}_size"] = cluster_sizes
     mean_coeffs.rename(
         columns={name: f"avg_{name[:3]}" for name in coefficient_names}, inplace=True
     )
-    return mean_coeffs
+    return mean_coeffs.reset_index()
+
+
+def append_mean_coefficients_per_cluster(df, cluster_col):
+    coefficient_names = ["negative", "neutral", "positive"]
+    usable_values = get_usable_clusters(df, cluster_col, coefficient_names)
+
+    mean_coeffs = (
+        df[df[cluster_col].isin(usable_values.index)]
+        .groupby(cluster_col)[coefficient_names]
+        .mean()
+        .reset_index()
+    )
+    mean_coeffs.rename(
+        columns={
+            name: f"avg_{cluster_col[:-3]}_{name[:3]}" for name in coefficient_names
+        },
+        inplace=True,
+    )
+    df = pd.merge(df, mean_coeffs, on=cluster_col, how="left")
+
+    return df
