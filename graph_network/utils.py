@@ -159,11 +159,54 @@ def get_cluster_plot(pandas_df, cluster_col):
     plt.show()
 
 
-def get_correlation_df_per_cluster(df, cluster_col):
-    coefficient_names = ["negative", "neutral", "positive"]
+# def get_correlation_df_per_cluster(df, cluster_col):
+#     coefficient_names = ["negative", "neutral", "positive"]
 
+#     std_dev = df.groupby(cluster_col)[coefficient_names].std()
+#     usable_values = std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
+#     pages = df[df[cluster_col].isin(usable_values.index)][
+#         [cluster_col, "negative", "neutral", "positive"]
+#     ].shape[0]
+#     print(
+#         "Number of Clusters that we can calculate the correlation:",
+#         usable_values.shape[0],
+#         "\n containing:",
+#         pages,
+#         "Pages/Nodes.",
+#     )
+
+#     mean_coeffs = (
+#         df[df[cluster_col].isin(usable_values.index)]
+#         .groupby(cluster_col)[coefficient_names]
+#         .mean()
+#         .reset_index()
+#     )
+
+#     correlation_matrix_per_cluster = (
+#         df[df[cluster_col].isin(usable_values.index)][
+#             [cluster_col, "negative", "neutral", "positive"]
+#         ]
+#         .groupby(cluster_col)[coefficient_names]
+#         .corr()
+#     )
+
+#     for name in coefficient_names:
+#         mean_coeffs.rename(columns={name: f"avgc_{name}"}, inplace=True)
+#     correlation_of_mean_sentiment_per_cluster = mean_coeffs[
+#         ["avgc_negative", "avgc_neutral", "avgc_positive"]
+#     ].corr()
+
+#     return correlation_of_mean_sentiment_per_cluster, correlation_matrix_per_cluster
+
+
+def get_usable_clusters(df, cluster_col, coefficient_names):
     std_dev = df.groupby(cluster_col)[coefficient_names].std()
-    usable_values = std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
+    return std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
+
+
+def get_cluster_overview(df, cluster_col):
+    coefficient_names = ["negative", "neutral", "positive"]
+    usable_values = get_usable_clusters(df, cluster_col, coefficient_names)
     pages = df[df[cluster_col].isin(usable_values.index)][
         [cluster_col, "negative", "neutral", "positive"]
     ].shape[0]
@@ -174,41 +217,10 @@ def get_correlation_df_per_cluster(df, cluster_col):
         pages,
         "Pages/Nodes.",
     )
-
-    mean_coeffs = (
-        df[df[cluster_col].isin(usable_values.index)]
-        .groupby(cluster_col)[coefficient_names]
-        .mean()
-        .reset_index()
+    cluster_sizes = (
+        df[df[cluster_col].isin(usable_values.index)].groupby(cluster_col).size()
     )
 
-    correlation_matrix_per_cluster = (
-        df[df[cluster_col].isin(usable_values.index)][
-            [cluster_col, "negative", "neutral", "positive"]
-        ]
-        .groupby(cluster_col)[coefficient_names]
-        .corr()
-    )
-
-    for name in coefficient_names:
-        mean_coeffs.rename(columns={name: f"avgc_{name}"}, inplace=True)
-    correlation_of_mean_sentiment_per_cluster = mean_coeffs[
-        ["avgc_negative", "avgc_neutral", "avgc_positive"]
-    ].corr()
-
-    return correlation_of_mean_sentiment_per_cluster, correlation_matrix_per_cluster
-
-
-def get_usable_clusters(df, cluster_col, coefficient_names):
-    std_dev = df.groupby(cluster_col)[coefficient_names].std()
-    return std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
-
-
-def get_average_sentiment_and_size_per_cluster(df, cluster_col):
-    coefficient_names = ["negative", "neutral", "positive"]
-    usable_values = get_usable_clusters(df, cluster_col, coefficient_names)
-
-    cluster_sizes = df.groupby(cluster_col).size()
     mean_coeffs = (
         df[df[cluster_col].isin(usable_values.index)]
         .groupby(cluster_col)[coefficient_names]
@@ -218,25 +230,73 @@ def get_average_sentiment_and_size_per_cluster(df, cluster_col):
     mean_coeffs.rename(
         columns={name: f"avg_{name[:3]}" for name in coefficient_names}, inplace=True
     )
-    return mean_coeffs.reset_index()
+    ndf = (
+        pd.merge(
+            mean_coeffs.reset_index(),
+            df[[cluster_col, f"color_{cluster_col}"]].drop_duplicates(),
+            on=cluster_col,
+            how="left",
+        )
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
+
+    return ndf[
+        [
+            cluster_col,
+            "avg_neg",
+            "avg_neu",
+            "avg_pos",
+            f"{cluster_col[:-3]}_size",
+            f"color_{cluster_col}",
+        ]
+    ].sort_values(f"{cluster_col[:-3]}_size", ascending=False)
 
 
 def append_mean_coefficients_per_cluster(df, cluster_col):
     coefficient_names = ["negative", "neutral", "positive"]
     usable_values = get_usable_clusters(df, cluster_col, coefficient_names)
-
+    cluster_sizes = df[cluster_col].value_counts()
+    large_clusters = cluster_sizes[cluster_sizes >= 10].index
     mean_coeffs = (
-        df[df[cluster_col].isin(usable_values.index)]
+        df[
+            (df[cluster_col].isin(usable_values.index))
+            & (df[cluster_col].isin(large_clusters))
+        ]
         .groupby(cluster_col)[coefficient_names]
         .mean()
         .reset_index()
     )
     mean_coeffs.rename(
-        columns={
-            name: f"avg_{cluster_col[:-3]}_{name[:3]}" for name in coefficient_names
-        },
+        columns={name: f"avg_cluster_{name[:3]}" for name in coefficient_names},
         inplace=True,
     )
     df = pd.merge(df, mean_coeffs, on=cluster_col, how="left")
 
     return df
+
+
+def get_mean_sentiment_corr(df, cluster_col):
+    print(
+        "Num of Pages for Analysis:\n",
+        append_mean_coefficients_per_cluster(df, cluster_col)
+        .dropna(subset=["avg_cluster_neu"])
+        .shape[0],
+    )
+    print(
+        "Num of Clusters for Analysis:\n",
+        append_mean_coefficients_per_cluster(df, cluster_col)
+        .dropna(subset=["avg_cluster_neu"])[cluster_col]
+        .value_counts()
+        .shape[0],
+    )
+    return append_mean_coefficients_per_cluster(df, cluster_col)[
+        [
+            "negative",
+            "neutral",
+            "positive",
+            "avg_cluster_neg",
+            "avg_cluster_neu",
+            "avg_cluster_pos",
+        ]
+    ].corr()[["negative", "neutral", "positive"]][3:6]
