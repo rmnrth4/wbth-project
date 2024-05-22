@@ -211,15 +211,13 @@ def get_cluster_overview(df, cluster_col):
         [cluster_col, "negative", "neutral", "positive"]
     ].shape[0]
     print(
-        "Number of Clusters that we can calculate the correlation:",
+        "Numbers of usable Clusters:",
         usable_values.shape[0],
         "\n containing:",
         pages,
         "Pages/Nodes.",
     )
-    cluster_sizes = (
-        df[df[cluster_col].isin(usable_values.index)].groupby(cluster_col).size()
-    )
+    cluster_sizes = df[cluster_col].value_counts()
 
     mean_coeffs = (
         df[df[cluster_col].isin(usable_values.index)]
@@ -230,7 +228,16 @@ def get_cluster_overview(df, cluster_col):
     mean_coeffs.rename(
         columns={name: f"avg_{name[:3]}" for name in coefficient_names}, inplace=True
     )
-    ndf = (
+    variance = (
+        df[df[cluster_col].isin(usable_values.index)]
+        .groupby(cluster_col)[coefficient_names]
+        .var()
+    )
+    variance.rename(
+        columns={name: f"var_{name[:3]}" for name in coefficient_names}, inplace=True
+    )
+
+    merged_df = (
         pd.merge(
             mean_coeffs.reset_index(),
             df[[cluster_col, f"color_{cluster_col}"]].drop_duplicates(),
@@ -241,12 +248,21 @@ def get_cluster_overview(df, cluster_col):
         .reset_index(drop=True)
     )
 
-    return ndf[
+    final_df = (
+        pd.merge(merged_df, variance.reset_index(), on=cluster_col, how="left")
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
+
+    return final_df[
         [
             cluster_col,
             "avg_neg",
             "avg_neu",
             "avg_pos",
+            "var_neg",
+            "var_neu",
+            "var_pos",
             f"{cluster_col[:-3]}_size",
             f"color_{cluster_col}",
         ]
