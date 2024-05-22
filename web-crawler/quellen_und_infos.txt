@@ -1,5 +1,38 @@
-
+###################################################################################################################
+################################################### Scrapy ########################################################
+###################################################################################################################
 Scrapy Kurs - https://youtu.be/mBoX_JCKZTE?t=5201 - An dieser stelle aufgehört
 oder in Text: - https://scrapeops.io/python-scrapy-playbook/scrapy-beginners-guide/
 Crawl Spider - https://www.youtube.com/watch?v=o1g8prnkuiQ
+
+###################################################################################################################
+################################################## MongoDB ########################################################
+###################################################################################################################
+Storing data in MongoDB: https://www.youtube.com/watch?v=djfnjtYB2co
+https://www.mongodb.com/basics/how-to-use-mongodb-to-store-scraped-data
+Run Mongo: 
+    brew services start mongodb-community@7.0
+Stop Mongo: 
+    brew services stop mongodb-community@7.0
+To verify that MongoDB is running, perform one of the following:
+    brew services list
+
+how-to-use-mongodb-to-store-scraped-data
+https://www.mongodb.com/basics/how-to-use-mongodb-to-store-scraped-data
+
+###################################################################################################################
+############################################ Sentiment Analysis ###################################################
+###################################################################################################################
+Sentiment Analysis:
+https://www.datacamp.com/tutorial/text-analytics-beginners-nltk
+https://huggingface.co/blog/sentiment-analysis-python --> https://huggingface.co/lxyuan/distilbert-base-multilingual-cased-sentiments-student
+
+
+###################################################################################################################
+############################################ Graph Visualisierung #################################################
+###################################################################################################################
+Erste Tabelle: Jede Webseite (auf der X-Achse) beinhaltet eine Liste mit allen links welche sie enthält.
+Matrix: Jede Webseite auf der X und auf der Y Achse. True Y auf der X-Webseite enthalten ist. Summe von True X-werten == Anzahl Elemente aus der Liste aus Tabelle Eins.
+Erwartetes Format vom Framework: Alle Verbindungen die True sind müssen aufgelistet werden in einer Liste. Beispiel: Node X – Node Y. Ausserdem muss Sentiment Wert mitgezogen werden.
+Network X Library Python – Dokumentation anschauen um Möglichkeiten zu evaluieren.
 
