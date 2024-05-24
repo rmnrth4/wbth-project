@@ -5,3 +5,9 @@
 .graph_network/plots
 .graph_network/plots_graphs_or_dfs_archive
 .sentiment-analyser/archiv
+# .graph_network/full_data_iv_29-04-24.json
+# .graph_network/graph_clustering_edge_betweenness_centrality_03-05-24.json
+# .graph_network/graph_clustering_shortest_path_03-05-24.json
+# .graph_network/url_clustering_2_04-05-24.json
+# .graph_network/url_clustering_3_04-05-24.json
+# .sentiment-analyser/saiv_28-04-24.json
