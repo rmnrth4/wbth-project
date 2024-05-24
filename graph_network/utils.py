@@ -20,38 +20,9 @@ def save_as_json(pandas_dataframe, file_name):
     pandas_dataframe.to_json(f"{file_name}_{date_info}.json", orient="records")
 
 
-# def rgba_to_hex(rgba):
-#     """Hilfsfunktion, die RGBA zu einem Hex-Farbcode konvertiert."""
-#     # Stellen Sie sicher, dass die RGBA-Liste korrekt ist
-#     try:
-#         if isinstance(rgba, (list, tuple)) and len(rgba) == 4:
-#             return "#{:02x}{:02x}{:02x}".format(
-#                 int(rgba[0] * 255), int(rgba[1] * 255), int(rgba[2] * 255)
-#             )
-#     except TypeError:
-#         pass  # Wenn ein Fehler auftritt, wird Grau zurückgegeben.
-#     return "#2e2e2e"
-
-
-# def convert_rgba_to_hex(df, columns):
-#     for column in columns:
-#         if column in df.columns:
-#             df[column] = df[column].apply(
-#                 lambda x: (
-#                     rgba_to_hex(x)
-#                     if isinstance(x, (list, tuple)) and len(x) == 4
-#                     else "#2e2e2e"
-#                 )
-#             )
-#         else:
-#             print(f"Warnung: Die Spalte '{column}' existiert nicht im DataFrame.")
-#     return df
-
-
-# cluster_data_with_matrix = convert_rgba_to_hex(cluster_data_with_matrix, ['color_cluster', 'color_cluster-db', 'color_cluster-h', 'color_scc_id', 'color_wcc_id', 'color_louvain_id', 'color_tf-idf_kmeans'])
-
-
-def get_graph_from_matrix_customized_color(matrix_df, color_col="color"):
+def get_graph_from_matrix_customized_color(
+    matrix_df, color_col="color", edge_color="#87edec"
+):
     import networkx as nx
     from pyvis.network import Network
 
@@ -62,7 +33,7 @@ def get_graph_from_matrix_customized_color(matrix_df, color_col="color"):
         for column in matrix_df.columns:
             if matrix_df.loc[idx, column] == True:
                 end_node = column
-                G.add_edge(start_node, end_node, color="#87edec")
+                G.add_edge(start_node, end_node, color=edge_color)
 
     N = Network(
         height="1500px",
@@ -87,21 +58,7 @@ def get_graph_from_matrix_customized_color(matrix_df, color_col="color"):
     for node in N.nodes:
         node_id = node["id"]
         node["color"] = G.nodes[node_id].get("color", "gray")
-    #     node["title"] = "    Neighbors:<br>" + "<br>".join(neighbor_map[node[""]])
-
     return G, N
-
-
-# def get_graph_from_cluster_data(matrix_df, cluster_data, cluster_id_col):
-#     color_col = f"color_{cluster_id_col}"
-#     cluster_matrix = pd.merge(
-#         matrix_df,
-#         cluster_data[["url", cluster_id_col, color_col]],
-#         how="left",
-#         on=["url"],
-#     )
-#     cluster_matrix = convert_rgba_to_hex(cluster_matrix, [color_col])
-#     return get_graph_from_matrix_customer_color(cluster_matrix, color_col)
 
 
 def get_graph_from_cluster_data_without_color(matrix_df, cluster_data, cluster_id_col):
@@ -112,7 +69,7 @@ def get_graph_from_cluster_data_without_color(matrix_df, cluster_data, cluster_i
         how="left",
         on=["url"],
     )
-    return get_graph_from_matrix_customer_color(cluster_matrix, color_col)
+    return get_graph_from_matrix_customized_color(cluster_matrix, color_col)
 
 
 def append_cluster_color(df, cluster_col, specific_colors):
@@ -157,46 +114,6 @@ def get_cluster_plot(pandas_df, cluster_col):
     ax.set_zlabel("Positive")
     ax.set_box_aspect(aspect=None, zoom=0.95)
     plt.show()
-
-
-# def get_correlation_df_per_cluster(df, cluster_col):
-#     coefficient_names = ["negative", "neutral", "positive"]
-
-#     std_dev = df.groupby(cluster_col)[coefficient_names].std()
-#     usable_values = std_dev[(std_dev["neutral"].notnull()) & (std_dev["neutral"] != 0)]
-#     pages = df[df[cluster_col].isin(usable_values.index)][
-#         [cluster_col, "negative", "neutral", "positive"]
-#     ].shape[0]
-#     print(
-#         "Number of Clusters that we can calculate the correlation:",
-#         usable_values.shape[0],
-#         "\n containing:",
-#         pages,
-#         "Pages/Nodes.",
-#     )
-
-#     mean_coeffs = (
-#         df[df[cluster_col].isin(usable_values.index)]
-#         .groupby(cluster_col)[coefficient_names]
-#         .mean()
-#         .reset_index()
-#     )
-
-#     correlation_matrix_per_cluster = (
-#         df[df[cluster_col].isin(usable_values.index)][
-#             [cluster_col, "negative", "neutral", "positive"]
-#         ]
-#         .groupby(cluster_col)[coefficient_names]
-#         .corr()
-#     )
-
-#     for name in coefficient_names:
-#         mean_coeffs.rename(columns={name: f"avgc_{name}"}, inplace=True)
-#     correlation_of_mean_sentiment_per_cluster = mean_coeffs[
-#         ["avgc_negative", "avgc_neutral", "avgc_positive"]
-#     ].corr()
-
-#     return correlation_of_mean_sentiment_per_cluster, correlation_matrix_per_cluster
 
 
 def get_usable_clusters(df, cluster_col, coefficient_names):
